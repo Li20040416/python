@@ -18,3 +18,7 @@ git clone <仓库地址>
 git status
 2. 提交更改
 git commit -m "提交说明"
+
+# 初始化本地仓库
+git init
+git clone <仓库地址>
