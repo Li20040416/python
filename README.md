@@ -1,7 +1,7 @@
 # Git 基本操作笔记
 
 ## 📌 一、配置用户信息
-
+```bash
 git config --global user.name "你的用户名"
 git config --global user.email "你的邮箱"
 git config --list
