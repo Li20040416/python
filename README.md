@@ -6,7 +6,7 @@ git config --global user.name "你的用户名"
 git config --global user.email "你的邮箱"
 git config --list
 
-## 📌二、创建或克隆仓库
+#### 📌二、创建或克隆仓库
 ```bash
 1. 初始化本地仓库
 git init
@@ -18,7 +18,3 @@ git clone <仓库地址>
 git status
 2. 提交更改
 git commit -m "提交说明"
-
-# 初始化本地仓库
-git init
-git clone <仓库地址>
