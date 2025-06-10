@@ -9,6 +9,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 from model import *
 
+
 # 准备数据集
 train_data = torchvision.datasets.CIFAR10(root="../dataset_chen",
                                          train=True,

@@ -1,38 +1,113 @@
-import torch
+# 完整的模型训练套路(以CIFAR10为例)
+import time
+
+import torch.optim
 import torchvision
-from PIL import Image
+from torch import nn
+from torch.utils.data import DataLoader
+from torch.utils.tensorboard import SummaryWriter
+
 from model import *
-from torchvision import transforms
 
-image_path = "Image/real.png"
-image = Image.open(image_path)
-print(image)
-# png格式是四个通道，除了RGB三个通道外，还有一个透明通道,调用image = image.convert('RGB')
-image = image.convert('RGB')
+# 准备数据集
+train_data = torchvision.datasets.CIFAR10(root="../dataset_chen",
+                                         train=True,
+                                         transform=torchvision.transforms.ToTensor(),
+                                         download=True)
 
-# 改变成tensor格式
-trans_reszie = transforms.Resize((32, 32))
-trans_totensor = transforms.ToTensor()
-transform = transforms.Compose([trans_reszie, trans_totensor])
-image = transform(image)
-print(image.shape)
+test_data = torchvision.datasets.CIFAR10(root="../dataset_chen",
+                                         train=False,
+                                         transform=torchvision.transforms.ToTensor(),
+                                         download=True )
 
-# 加载训练模型
-model = torch.load("model_save\\chen_3.pth", map_location="cpu")
+# 数据集长度
+train_data_size = len(train_data)
+test_data_size = len(test_data)
+print(f"训练数据集的长度{train_data_size}")
+print(f"测试数据集的长度{test_data_size}")
 
-# print(model)
+# 加载数据集
+train_loader = DataLoader(train_data,batch_size=64)
+test_loader = DataLoader(test_data,batch_size=64)
 
-image = torch.reshape(image, (1, 3, 32, 32))
-# image = image.cuda()
+# 创建网络模型
 
-# 将模型转换为测试模型
-model.eval()
-with torch.no_grad():
-    output = model(image)
-# print(output)
+chen = Chen()
 
-print(output.argmax(1))
+# 创建损失函数
+loss_fn = nn.CrossEntropyLoss()
 
-#测试图片fruit.png
-#torch.Size([3, 32, 32])
-#tensor([7])
+# 优化器
+# learning_rate = 1e-2 相当于(10)^(-2)
+learning_rate = 0.01
+optim = torch.optim.SGD(chen.parameters(),lr=learning_rate)
+
+# 设置训练网络的一些参数
+total_train_step = 0 #记录训练的次数
+total_test_step = 0 # 记录测试的次数
+epoch = 10 # 训练的轮数
+
+# 添加tensorboard
+writer = SummaryWriter("../logs_train")
+
+# 添加开始时间
+start_time = time.time()
+
+for i in range(epoch):
+    print(f"-----第{i+1}轮训练开始-----")
+    # 训练步骤
+    for data in train_loader:
+        imgs, targets = data
+        outputs = chen(imgs)
+        loss = loss_fn(outputs,targets)
+
+        # 优化器优化模型
+        optim.zero_grad()  # 梯度清零
+        loss.backward()  # 反向传播
+        optim.step()
+
+        total_train_step += 1
+        if total_train_step % 500 == 0:
+            print(f"第{total_train_step}的训练的loss:{loss.item()}")
+            writer.add_scalar("train_loss",loss.item(),total_train_step)
+
+    end_time = time.time()
+    print(f"训练时间{end_time - start_time}")
+
+    # 测试步骤（以测试数据上的正确率来评估模型）
+    total_test_loss = 0.0
+    # 整体正确个数
+    total_accuracy = 0
+    with torch.no_grad():
+        for data in test_loader:
+            imgs, targets = data
+            outputs = chen(imgs)
+            # 损失
+            loss = loss_fn(outputs,targets)
+            total_test_loss += loss.item()
+            # 正确率
+            accuracy = (outputs.argmax(1) == targets).sum()
+            total_accuracy += accuracy
+
+    print(f"整体测试集上的loss:{total_test_loss}")
+    print(f"整体测试集上的正确率：{total_accuracy/test_data_size}")
+    writer.add_scalar("test_loss", total_test_loss, total_test_step)
+    writer.add_scalar("test_accuracy",total_accuracy,total_test_step)
+    total_test_step += 1
+
+    # 保存每一轮训练模型
+    torch.save(chen,f"model_save\\chen_{i}.pth")
+    print("模型已保存")
+
+writer.close()
+
+# Files already downloaded and verified
+# Files already downloaded and verified
+# 训练数据集的长度50000
+# 测试数据集的长度10000
+# -----第1轮训练开始-----
+# 第500的训练的loss:2.1635842323303223
+# 训练时间17.927326440811157
+# 整体测试集上的loss:325.07822024822235
+# 整体测试集上的正确率：0.2551000118255615
+# 模型已保存
