@@ -4,7 +4,6 @@ from sklearn.model_selection import train_test_split
 import random
 # 设置随机种子以确保可重复性
 random.seed(42)
-
 # 数据集路径
 dataset_dir = r'C:\Users\石庆\OneDrive\桌面\比赛纪念\全球人工智能大赛作品\Images'  # 替换为你的数据集路径
 train_dir = r'C:\Users\石庆\OneDrive\桌面\比赛纪念\全球人工智能大赛作品\day03\image\train'  # 训练集输出路径

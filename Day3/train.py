@@ -17,6 +17,8 @@ transform = transforms.Compose([
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 ])
 
+
+
 # 3. 加载数据集
 train_dir = r"C:\Users\石庆\OneDrive\桌面\比赛纪念\全球人工智能大赛作品\day03\image\train"
 test_dir = r"C:\Users\石庆\OneDrive\桌面\比赛纪念\全球人工智能大赛作品\day03\image\val"

@@ -1,6 +1,5 @@
 ### prepare.py
 import os
-
 # 创建保存路径的函数
 def create_txt_file(root_dir, txt_filename):
     # 打开并写入文件
