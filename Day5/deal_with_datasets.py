@@ -13,6 +13,7 @@ dataset_dir = r'/Project2_Day5/ultralytics-main/datasets_cups/Images'  # 替换�
 train_dir = r'/Project2_Day5/ultralytics-main/datasets_cups/Images/train'  # 训练集输出路径
 val_dir = r'/Project2_Day5/ultralytics-main/datasets_cups/Images/val'  # 验证集输出路径
 
+
 # 划分比例
 train_ratio = 0.7
 

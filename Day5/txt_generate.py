@@ -1,7 +1,6 @@
 import os
 # 最后一步:生成数据集的train.txt val.txt test.txt
 
-
 def write_file_paths_to_txt(directory, output_file):
     with open(output_file, 'w') as f:
         for root, dirs, files in os.walk(directory):
